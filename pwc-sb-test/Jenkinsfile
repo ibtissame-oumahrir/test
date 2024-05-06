@@ -1,15 +1,45 @@
+properties([
+    parameters([
+        choice(
+            choices: ['master', 'feature'],
+            description: 'Select a branch to build first',
+            name: 'branch'
+        )
+    ])
+])
+
 pipeline {
     agent any
     
     stages {
-        stage('test_test') {
+       stage('Checkout') {
             steps {
                 script {
-                    echo "test stage"
+                    if (params.branch == 'master') {
+                   
+                        sh '[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.0:compile (default-compile) on project cre-product-common: Fatal error compiling: java.lang.ExceptionInInitializerError: Unable to make field private com.sun.tools.javac.processing.JavacProcessingEnvironment$DiscoveredProcessors com.sun.tools.javac.processing.JavacProcessingEnvironment.discoveredProcs accessible: module jdk.compiler does not ""opens com.sun.tools.javac.processing"" to unnamed module @1f521c69 -> [Help 1], [ERROR], [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch., [ERROR] Re-run Maven using the -X switch to enable full debug logging., [ERROR]'
+                      
+                    } else if (params.branch == 'feature') {
+              
+                        sh '8197 [main] [ERROR] SonarQube server [http://10.1.90.22:9000/sonar] can not be reached, 8864 [main] [ERROR] Failed to execute goal org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar (default-cli) on project pwc-sb-product: Unable to execute SonarQube: Fail to get bootstrap index from server: Status returned by url [http://10.1.90.22:9000/sonar/batch/index] is not valid: [502] -> [Help 1], 8864 [main] [ERROR], 8864 [main] [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch., 8864 [main] [ERROR] Re-run Maven using the -X switch to enable full debug logging. "Bitbucket est indisponible" && exit 1'
+                    }
                 }
             }
         }
-        
       
-
-}}
+        stage('Build') {
+          steps {
+                script {
+                    if (params.branch == 'master') {
+                        error '7659 [main] [ERROR] Failed to execute goal org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar (default-cli) on project pwc-sb-product: Not authorized. Please check the properties sonar.login and sonar.password. -> [Help 1], 7660 [main] [ERROR], 7660 [main] [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch., 7660 [main] [ERROR] Re-run Maven using the -X switch to enable full debug logging., 7660 [main] [ERROR]'
+                    } else if (params.branch == 'feature') {
+                        error '[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.0:compile (default-compile) on project cre-product-common: Fatal error compiling: java.lang.ExceptionInInitializerError: Unable to make field private com.sun.tools.javac.processing.JavacProcessingEnvironment$DiscoveredProcessors com.sun.tools.javac.processing.JavacProcessingEnvironment.discoveredProcs accessible: module jdk.compiler does not ""opens com.sun.tools.javac.processing"" to unnamed module @417bfebd -> [Help 1], [ERROR], [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch., [ERROR] Re-run Maven using the -X switch to enable full debug logging., [ERROR]'
+                    }
+                }
+            }
+        }
+       
+  
+    
+    }
+}
